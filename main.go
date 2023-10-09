@@ -8,7 +8,7 @@ import (
 func main() {
 	// Define a handler function that writes "Hello, World" to the response.
 	handler := func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Eripuka!")
+		fmt.Fprint(w, "Hello World!")
 	}
 
 	// Register the handler function for the root ("/") route.
