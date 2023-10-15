@@ -10,10 +10,11 @@ import (
 
 
 func main() {
-	r := chi.NewRouter()
+	router := chi.NewRouter()
 
-	r.Get("/", handlers.HomeHandler)
+	router.Get("/", handlers.HomeHandler)
+	router.Get("/ws", handlers.WSHandler)
 	fmt.Print("Server is running on http://localhost:8080")
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe(":8080", router)
 
 }

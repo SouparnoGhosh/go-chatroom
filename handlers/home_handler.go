@@ -1,10 +1,13 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
+	"path/filepath"
+
 )
 
+
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "What's cooking Doc!")
+	filePath := filepath.Join("frontend", "index.html")
+	http.ServeFile(w, r, filePath)
 }
