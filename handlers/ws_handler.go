@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -25,14 +26,17 @@ func WSHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Infinite for loop. Read the message and then print it immediately.
     for {
-        messageType, p, err := conn.ReadMessage()
+        messageType, messageBody, err := conn.ReadMessage()
         if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
             return
         }
 
+		timestamp := time.Now().Format("06-01-02 15:04")
+		message := []byte(timestamp + " " + string(messageBody))
+
         // Echo the message back to the client
-        if err := conn.WriteMessage(messageType, p); err != nil {
+        if err := conn.WriteMessage(messageType, message); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
             return
         }

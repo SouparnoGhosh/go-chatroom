@@ -11,17 +11,25 @@
         <input type="text" id="message-input" placeholder="Type your message and press Enter">
         <div id="messages"></div>
     </div>
+    
     <script>
         const socket = new WebSocket("ws://localhost:8080/ws");
         const messageInput = document.getElementById("message-input");
         const messageContainer = document.getElementById("messages");
-
+    
+        // Retrieve stored messages from localStorage
+        const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+        storedMessages.forEach(message => appendMessage(message));
+    
         socket.onmessage = (event) => {
-            const message = document.createElement("div");
-            message.textContent = event.data;
-            messageContainer.appendChild(message);
+            const message = event.data;
+            appendMessage(message);
+    
+            // Store the new message in localStorage
+            storedMessages.push(message);
+            localStorage.setItem("chatMessages", JSON.stringify(storedMessages));
         };
-
+    
         messageInput.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
                 const message = messageInput.value;
@@ -29,6 +37,13 @@
                 messageInput.value = "";
             }
         });
+    
+        function appendMessage(message) {
+            const messageElement = document.createElement("div");
+            messageElement.textContent = message;
+            messageContainer.appendChild(messageElement);
+        }
     </script>
+
 </body>
 </html>
