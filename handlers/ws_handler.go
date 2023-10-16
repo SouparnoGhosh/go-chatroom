@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"time"
-
 	"github.com/gorilla/websocket"
 )
 
@@ -13,6 +11,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+var clients = make(map[*websocket.Conn]bool) // connected clients
 
 func WSHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a WS Connection from HTTP Connection
@@ -32,13 +31,22 @@ func WSHandler(w http.ResponseWriter, r *http.Request) {
             return
         }
 
-		timestamp := time.Now().Format("06-01-02 15:04")
-		message := []byte(timestamp + " " + string(messageBody))
+		// timestamp := time.Now().Format("06-01-02 15:04")
+		// message := []byte(timestamp + " " + string(messageBody))
 
-        // Echo the message back to the client
-        if err := conn.WriteMessage(messageType, message); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
+        // // Echo the message back to the client
+        // if err := conn.WriteMessage(messageType, message); err != nil {
+		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+        //     return
+        // }
+
+        for client := range clients {
+            err := client.WriteMessage(messageType, messageBody)
+            if err != nil {
+                http.Error(w, err.Error(), http.StatusInternalServerError)
+                client.Close()
+                delete(clients, client)
+            }
         }
     }
 }
