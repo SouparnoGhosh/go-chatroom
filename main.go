@@ -2,19 +2,19 @@ package main
 
 import (
 	"fmt"
+	"go-chatroom/handlers"
 	"net/http"
+
+	"github.com/go-chi/chi"
 )
 
+
 func main() {
-	// Define a handler function that writes "Hello, World" to the response.
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello World!")
-	}
+	router := chi.NewRouter()
 
-	// Register the handler function for the root ("/") route.
-	http.HandleFunc("/", handler)
+	router.Get("/", handlers.HomeHandler)
+	router.Get("/ws", handlers.WSHandler)
+	fmt.Print("Server is running on http://localhost:8080")
+	http.ListenAndServe(":8080", router)
 
-	// Start the web server on port 8080.
-	fmt.Println("Server is running on http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
 }

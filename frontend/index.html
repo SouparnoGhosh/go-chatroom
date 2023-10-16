@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+</head>
+<body>
+    <div id="message-container">
+        <input type="text" id="message-input" placeholder="Type your message and press Enter">
+        <div id="messages"></div>
+    </div>
+    
+    <script>
+        const socket = new WebSocket("ws://localhost:8080/ws");
+        const messageInput = document.getElementById("message-input");
+        const messageContainer = document.getElementById("messages");
+    
+        // Retrieve stored messages from localStorage
+        const storedMessages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+        storedMessages.forEach(message => appendMessage(message));
+    
+        socket.onmessage = (event) => {
+            const message = event.data;
+            appendMessage(message);
+    
+            // Store the new message in localStorage
+            storedMessages.push(message);
+            localStorage.setItem("chatMessages", JSON.stringify(storedMessages));
+        };
+    
+        messageInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                const message = messageInput.value;
+                socket.send(message);
+                messageInput.value = "";
+            }
+        });
+    
+        function appendMessage(message) {
+            const messageElement = document.createElement("div");
+            messageElement.textContent = message;
+            messageContainer.appendChild(messageElement);
+        }
+    </script>
+
+</body>
+</html>
