@@ -6,11 +6,14 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	// "github.com/gin-gonic/gin"
 )
 
 
 func main() {
 	router := chi.NewRouter()
+	// router := gin.Default()
+
 
 	router.Get("/", handlers.HomeHandler)
 	router.Get("/ws", handlers.WSHandler)
